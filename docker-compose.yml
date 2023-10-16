@@ -1,0 +1,46 @@
+version: '3.7'
+services:
+  mongodb_container:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/mongo_secrets
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
+    secrets:
+      - mongo_secrets
+    networks:
+      - api-network
+
+
+  cache:
+    image: redis:7.2.1
+    ports:
+      - 6379:6379
+    volumes:
+      - mongodb_data_container:/data
+    networks:
+      - api-network
+
+  app:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      - cache
+      - mongodb_container
+    networks:
+      - api-network
+    
+secrets:
+  mongo_secrets:
+    file: ./secrets.txt
+
+volumes:
+  mongodb_data_container:
+
+networks:
+  api-network:
+    driver: bridge
