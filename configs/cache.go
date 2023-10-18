@@ -8,7 +8,7 @@ var RedisClient *redis.Client
 
 func CreateRedisClient() {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "web-dawn-cache-1:6379",
+		Addr:     EnvRedis(),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
